@@ -18,10 +18,7 @@ public class GameOverPanel : MonoBehaviour
         _gamecontroller.GameFinished -= OnGameFinished;
     }
 
-    private void OnGameFinished(bool win, bool lost)
-    {
-        Show(win, lost);
-    }
+    private void OnGameFinished(bool isWin) => Show(isWin);    
 
     public void Hide()
     {
@@ -31,11 +28,19 @@ public class GameOverPanel : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Show(bool win, bool lost)
+    public void Show(bool isWin)
     {
         gameObject.SetActive(true);
 
-        _imageWin.gameObject.SetActive(win);
-        _imageLost.gameObject.SetActive(lost);
+        if (isWin)
+        {
+            _imageWin.gameObject.SetActive(true);
+            _imageLost.gameObject.SetActive(false);
+        }
+        else
+        {
+            _imageWin.gameObject.SetActive(false);
+            _imageLost.gameObject.SetActive(true);
+        }
     }
 }

@@ -1,30 +1,43 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class GameDefeatNumberEnymiesInScence : IConditionsDefeat, IDisposable
+public class NumberEnymiesInScence : IConditions
 {
-    public event Action ÑonditionDefeatfulfilled;
+    public event Action Ñonditionfulfilled;
 
     private int _numberEnemiesInSceneForDefeat;
     private int _currentNumberEnemiesInScene;
-   
+
     private SpawnerEnemy _spawner;
-    
 
-
-    public GameDefeatNumberEnymiesInScence(int numberEnemiesInSceneForDefeat, SpawnerEnemy spawner)
+    public NumberEnymiesInScence(int numberEnemiesInSceneForDefeat, SpawnerEnemy spawner)
     {
         _numberEnemiesInSceneForDefeat = numberEnemiesInSceneForDefeat;
         _currentNumberEnemiesInScene = 0;
-        
+
         _spawner = spawner;
         _spawner.SpawnedNewEnemy += OnSpawnedNewEnemy;
-        _spawner.KilledEnemy += OnKilledEnemy;                       
+        _spawner.KilledEnemy += OnKilledEnemy;
     }
 
-    public void ProcessingDefeatCondition()
+
+    public void OnDisable()
     {
+        
+    }
+
+    public void OnEnable()
+    {
+        
+    }
+
+    public void Update()
+    {
+        Debug.Log($" òåêóùåå êîë-âî âðàãîâ {_currentNumberEnemiesInScene}");
         if (_currentNumberEnemiesInScene >= _numberEnemiesInSceneForDefeat)
-            ÑonditionDefeatfulfilled?.Invoke();
+            Ñonditionfulfilled?.Invoke();
     }
 
     public void Dispose()
@@ -35,13 +48,12 @@ public class GameDefeatNumberEnymiesInScence : IConditionsDefeat, IDisposable
     private void OnKilledEnemy()
     {
         _currentNumberEnemiesInScene--;
-        ProcessingDefeatCondition();
+        Update();
     }
 
     private void OnSpawnedNewEnemy()
     {
         _currentNumberEnemiesInScene++;
-        ProcessingDefeatCondition();
+        Update();
     }
-
 }
