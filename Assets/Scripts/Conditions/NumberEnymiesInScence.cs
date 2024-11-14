@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NumberEnymiesInScence : IConditions
@@ -11,8 +9,9 @@ public class NumberEnymiesInScence : IConditions
     private int _currentNumberEnemiesInScene;
 
     private SpawnerEnemy _spawner;
+    private Player _player;
 
-    public NumberEnymiesInScence(int numberEnemiesInSceneForDefeat, SpawnerEnemy spawner)
+    public NumberEnymiesInScence(int numberEnemiesInSceneForDefeat, SpawnerEnemy spawner, Player player)
     {
         _numberEnemiesInSceneForDefeat = numberEnemiesInSceneForDefeat;
         _currentNumberEnemiesInScene = 0;
@@ -20,17 +19,18 @@ public class NumberEnymiesInScence : IConditions
         _spawner = spawner;
         _spawner.SpawnedNewEnemy += OnSpawnedNewEnemy;
         _spawner.KilledEnemy += OnKilledEnemy;
+        _player = player;
+        _player.DeidPlayer += OnDeidPlayer;
     }
-
 
     public void OnDisable()
     {
-        
+
     }
 
     public void OnEnable()
     {
-        
+
     }
 
     public void Update()
@@ -43,6 +43,11 @@ public class NumberEnymiesInScence : IConditions
     public void Dispose()
     {
         _spawner.SpawnedNewEnemy -= OnSpawnedNewEnemy;
+    }
+
+    private void OnDeidPlayer()
+    {
+        Ñonditionfulfilled?.Invoke();
     }
 
     private void OnKilledEnemy()

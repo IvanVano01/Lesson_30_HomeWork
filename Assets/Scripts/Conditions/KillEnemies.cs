@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class KillEnemies : IConditions
+public class KillEnemies : IConditions, IDisposable
 {
     public event Action Ñonditionfulfilled;
 
@@ -16,7 +13,7 @@ public class KillEnemies : IConditions
 
     public KillEnemies(int numberKilledEnemiesForVictory, SpawnerEnemy spawnerEnemy, Player player, KillsEnemyView killsEnemyView)
     {
-        _player = player;        
+        _player = player;
         _spawnerEnemy = spawnerEnemy;
         _numberKilledEnemiesForVictory = numberKilledEnemiesForVictory;
         _killsEnemyView = killsEnemyView;
@@ -44,7 +41,6 @@ public class KillEnemies : IConditions
             Ñonditionfulfilled?.Invoke();
         }
     }
-    
 
     public void Dispose()
     {

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Bootstrap : MonoBehaviour
 {
@@ -28,6 +27,7 @@ public class Bootstrap : MonoBehaviour
 
     private GameController _gameController;
     private ConditionFactory _conditionFactory;
+    private ConditionSwitcher _conditionSwitcher;
 
     private InputHandler _inputHandler;
     private SpawnerPlayer _spawnePlayer;
@@ -35,20 +35,28 @@ public class Bootstrap : MonoBehaviour
 
     private void Awake()
     {
+        _gameController = new GameController();
         _inputHandler = new InputHandler();
-        _spawnePlayer = new SpawnerPlayer(_playerPrefab, _inputHandler, _healthBar, _pointSpawnPosition.transform.position);
-        _spawnerEnemy = new SpawnerEnemy(_enemyPrefab, _centrArenaPosition, this, pointsSpawnPosition);
-        _killsEnemyView.Initialize(_spawnerEnemy);        
 
-        _gameController = new GameController(_gameDefeat, _gameVictory, _conditionFactory, _numberKilledEnemiesForVictory, _numberEnemiesInSceneForDefeat, _surviveInTimeMax,
-            _gameOverPanel, _timerView, _killsEnemyView, _spawnePlayer, _spawnerEnemy, this);
+        _spawnePlayer = new SpawnerPlayer(_playerPrefab, _inputHandler, _healthBar, _pointSpawnPosition.transform.position, _gameController);
+        Player player =_spawnePlayer.Player;
 
-        _targetCamera.transform.position = new Vector3(_spawnePlayer.Player.transform.position.x, _targetCamera.position.y, _spawnePlayer.Player.transform.position.z);
+        _spawnerEnemy = new SpawnerEnemy(_enemyPrefab, _centrArenaPosition,_gameController, this, pointsSpawnPosition);
+        _killsEnemyView.Initialize(_spawnerEnemy);
+
+        _conditionFactory = new ConditionFactory(_gameController, _spawnerEnemy, player, this, _surviveInTimeMax, _numberKilledEnemiesForVictory,
+            _numberEnemiesInSceneForDefeat, _timerView, _killsEnemyView);
+
+        _conditionSwitcher = new ConditionSwitcher(_gameDefeat, _gameVictory, _gameController, _conditionFactory);
+        _gameOverPanel.Initialize(_gameController);
+
+        _targetCamera.transform.position = new UnityEngine.Vector3(_spawnePlayer.Player.transform.position.x, _targetCamera.position.y, _spawnePlayer.Player.transform.position.z);
         _targetCamera.transform.SetParent(_spawnePlayer.Player.transform);
-    }
+    }    
 
     private void Update()
     {
         _gameController.Update();
+        _spawnerEnemy.Update();
     }
 }

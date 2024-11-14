@@ -10,7 +10,7 @@ public class SpawnerEnemy
     public event Action SpawnedNewEnemy;
 
     private MonoBehaviour _bevaviorCoroutiners;
-    //private GameController _gameController;
+    private GameController _gameController;
     private Queue<Vector3> _pointsSpawnPosition;
     private Enemy _spawnPrefab;
     private Transform _centrArenaPosition;
@@ -18,14 +18,14 @@ public class SpawnerEnemy
     private int _maxCountSpawn = 45;
     private Coroutine _delayToSpawnCoroutine;
 
-    private int _healthEnemy = 4 ;
+    private int _healthEnemy = 4;
     private List<Enemy> _enemyArrayInScense;
     private Vector3 _currentPointSpawnPosition;
 
-    public SpawnerEnemy(Enemy spawnPrefab, Transform centrArenaPosition, MonoBehaviour bevaviorCoroutiners, List<Transform> pointsSpawn)
+    public SpawnerEnemy(Enemy spawnPrefab, Transform centrArenaPosition, GameController gameController, MonoBehaviour bevaviorCoroutiners, List<Transform> pointsSpawn)
     {
         _spawnPrefab = spawnPrefab;
-        
+
         _centrArenaPosition = centrArenaPosition;
         _bevaviorCoroutiners = bevaviorCoroutiners;
         _enemyArrayInScense = new List<Enemy>();
@@ -33,13 +33,13 @@ public class SpawnerEnemy
         _pointsSpawnPosition = new Queue<Vector3>(pointsSpawn.Select(pointSpawn => pointSpawn.position));
         _currentPointSpawnPosition = _pointsSpawnPosition.Dequeue();
         _delayToSpawnCoroutine = _bevaviorCoroutiners.StartCoroutine(StartTimerToSpawn());
-        //_gameController = gameController;
+        _gameController = gameController;
     }
 
     public void Update()
     {
-        //if (_gameController.IsRunningGame == false)
-        //    _bevaviorCoroutiners.StopCoroutine(_delayToSpawnCoroutine);
+        if (_gameController.IsRunningGame == false)
+            return;
 
         if (_delayToSpawnCoroutine == null && _enemyArrayInScense.Count < _maxCountSpawn)
         {
@@ -68,11 +68,11 @@ public class SpawnerEnemy
         if (enemy.TryGetComponent(out Enemy newEnemy))
         {
             Health health = new Health(_healthEnemy);
-            newEnemy.Initialize(_centrArenaPosition.position, health, this);
+            newEnemy.Initialize(_centrArenaPosition.position, health, this, _gameController);
             _enemyArrayInScense.Add(newEnemy);
             SwitchPointSpawn();
 
-            SpawnedNewEnemy?.Invoke();            
+            SpawnedNewEnemy?.Invoke();
         }
         else
         {
@@ -83,7 +83,7 @@ public class SpawnerEnemy
     private void SwitchPointSpawn()
     {
         _pointsSpawnPosition.Enqueue(_currentPointSpawnPosition);
-        _currentPointSpawnPosition = _pointsSpawnPosition.Dequeue();        
+        _currentPointSpawnPosition = _pointsSpawnPosition.Dequeue();
     }
 
     public void ToReportEnemyKilled()

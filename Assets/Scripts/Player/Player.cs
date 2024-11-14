@@ -17,22 +17,22 @@ public class Player : MonoBehaviour, IDamageable
     private Rotator _rotator;
     private Health _health;
 
-    private HealthBar _healthBar;    
+    private GameController _gameController;
+    private HealthBar _healthBar;
 
-    private bool _isDead;
     private bool _isShooting;
 
-    public void Initialize(InputHandler inputHandler, Health health, HealthBar healthBar)
+    public void Initialize(InputHandler inputHandler, Health health, HealthBar healthBar, GameController gameController)
     {
         _characterController = GetComponent<CharacterController>();
         _shoot = GetComponent<Shoot>();
-
+        _gameController = gameController;
         _inputHandler = inputHandler;
+
         _mover = new Mover();
         _rotator = new Rotator(this.transform);
         _health = health;
         _healthBar = healthBar;
-       
 
         _health.ChangedHealth += OnChangedHealth;
     }
@@ -40,11 +40,11 @@ public class Player : MonoBehaviour, IDamageable
     private void OnDestroy()
     {
         _health.ChangedHealth -= OnChangedHealth;
-    }   
+    }
 
     private void Update()
     {
-        if (_isDead)
+        if (_gameController.IsRunningGame == false)
             return;
 
         _inputHandler.Update();
@@ -62,23 +62,22 @@ public class Player : MonoBehaviour, IDamageable
     {
         Enemy enemy = other.GetComponentInParent<Enemy>();
 
-        if (enemy != null)          
-            TakeDamage(enemy.DamageAplly);        
+        if (enemy != null)
+            TakeDamage(enemy.DamageAplly);
     }
 
     public void TakeDamage(int damage)
     {
-        _health.Reduce(damage); 
+        _health.Reduce(damage);
     }
 
     public void ToDie()
     {
         _healthBar.Hide();
-        _isDead = true;
         gameObject.SetActive(false);
     }
-    
-    public void ActivateHealthBar() => _healthBar.Show();    
+
+    public void ActivateHealthBar() => _healthBar.Show();
     public void SetShoot(bool shoot) => _isShooting = shoot;
 
     private void OnChangedHealth(int currenthealth)
@@ -89,5 +88,4 @@ public class Player : MonoBehaviour, IDamageable
             ToDie();
         }
     }
-
 }

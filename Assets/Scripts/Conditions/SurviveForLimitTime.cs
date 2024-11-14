@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SurviveForLimitTime : IConditions
@@ -22,14 +21,8 @@ public class SurviveForLimitTime : IConditions
         _gameController = gameController;
         _player = player;        
         _surviveInTimeMax = surviveInTimeMax;
-        _timerView = timerView; 
-        //_player.DeidPlayer += OnDeidPlayer;
-    }
-
-    public void Dispose()
-    {
-        //_player.DeidPlayer -= OnDeidPlayer;
-    }
+        _timerView = timerView;         
+    }   
 
     public void OnDisable()
     {

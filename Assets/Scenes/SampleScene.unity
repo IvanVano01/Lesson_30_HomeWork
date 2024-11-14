@@ -1998,8 +1998,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b82728a03bf2dc478ea710d3893af1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameDefeat: 1
-  _gameVictory: 0
+  _gameDefeat: 0
+  _gameVictory: 1
   _numberKilledEnemiesForVictory: 5
   _numberEnemiesInSceneForDefeat: 25
   _surviveInTimeMax: 20

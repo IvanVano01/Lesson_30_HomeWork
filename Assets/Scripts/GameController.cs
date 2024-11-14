@@ -1,88 +1,30 @@
 using System;
-using UnityEngine;
 
 public class GameController 
 {
     public event Action<bool> GameFinished;
-
-    private GameDefeat _gameDefeat;
-    private GameVictory _gameVictory;
-
-    private int _numberKilledEnemiesForVictory;
-    private int _numberEnemiesInSceneForDefeat;
-    private int _surviveInTimeMax;
-
-    private GameOverPanel _gameOverPanel;
-    private TimerView _timerView;
-    private KillsEnemyView _killsEnemyView;
-
-    private SpawnerPlayer _spawnerPlayer;
-    //private Player _player;
-    private SpawnerEnemy _spawnerEnemy;
-    private MonoBehaviour _monoBehaviour;
-
-    private ConditionFactory _conditionFactory;
+   
     private IConditions _currentConditionVictory;
     private IConditions _currentConditionDefeat;
 
-    public GameController(GameDefeat gameDefeat, GameVictory gameVictory, ConditionFactory conditionFactory, int numberKilledEnemiesForVictory, int numberEnemiesInSceneForDefeat,
-        int surviveInTimeMax, GameOverPanel gameOverPanel, TimerView timerView, KillsEnemyView killsEnemyView, SpawnerPlayer spawnerPlayer, SpawnerEnemy spawnerEnemy,
-        MonoBehaviour monoBehaviour)
-    {
-        _gameDefeat = gameDefeat;
-        _gameVictory = gameVictory;
-        _conditionFactory = conditionFactory;
-
-        _numberKilledEnemiesForVictory = numberKilledEnemiesForVictory;
-        _numberEnemiesInSceneForDefeat = numberEnemiesInSceneForDefeat;
-        _surviveInTimeMax = surviveInTimeMax;
-
-        _gameOverPanel = gameOverPanel;
-        _timerView = timerView;
-        _killsEnemyView = killsEnemyView;
-
-        _spawnerPlayer = spawnerPlayer;
-        Player player = _spawnerPlayer.Player;
-       
-        _spawnerEnemy = spawnerEnemy;
-        _monoBehaviour = monoBehaviour;
-
-        _conditionFactory = new ConditionFactory(this, _spawnerEnemy, player, _monoBehaviour, _surviveInTimeMax, _timerView, _killsEnemyView);
-        _gameOverPanel.Initialize(this);
-
-        player.DeidPlayer += OnDeidPlayer;
+    public GameController()   
+    { 
         StartGame();
     }
 
-    public bool IsRunningGame { get; private set; }
-    public int NumberKilledEnemiesForVictory => _numberKilledEnemiesForVictory;
-    public int NumberEnemiesInSceneForDefeat => _numberEnemiesInSceneForDefeat;
+    public bool IsRunningGame { get; private set; }   
 
     public void Update()
     {
         if (IsRunningGame == false)
             return;
-
-        _spawnerEnemy.Update();
+        
     }
 
     public void StartGame()
-    {
-        SetConditionVictory(_conditionFactory.GetConditionsVictory(_gameVictory));
-        SetConditionDefaet(_conditionFactory.GetConditionsDefeat(_gameDefeat));
-
+    { 
         IsRunningGame = true;
-    }
-
-    private void WinGame()
-    {
-        GameOver(true);
-    }
-
-    private void DefeatGame()
-    {
-        GameOver(false);
-    }
+    }   
 
     public void SetConditionVictory(IConditions conditionVictory)
     {
@@ -116,6 +58,16 @@ public class GameController
         _currentConditionDefeat.—onditionfulfilled += On—onditionfulfilledDefeat;
     }
 
+    private void WinGame()
+    {
+        GameOver(true);
+    }
+
+    private void DefeatGame()
+    {
+        GameOver(false);
+    }
+
     private void On—onditionfulfilledVictory()
     {
         WinGame();
@@ -124,24 +76,11 @@ public class GameController
     private void On—onditionfulfilledDefeat()
     {
         DefeatGame();
-    }
-
-    private void OnDeidPlayer()
-    {
-        DefeatGame();
-    }
+    }    
 
     private void GameOver(bool isWin)
     {
-        GameFinished?.Invoke(isWin);
-
-        _timerView.Hide();
-
         IsRunningGame = false;
-    }
-
-    //void IDisposable.Dispose()
-    //{
-    //    _player.DeidPlayer -= OnDeidPlayer;
-    //}
+        GameFinished?.Invoke(isWin);        
+    }    
 }

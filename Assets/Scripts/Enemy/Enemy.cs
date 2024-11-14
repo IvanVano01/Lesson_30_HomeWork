@@ -10,25 +10,25 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private float _radiusArenaMax = 15f;
     private Vector3 _centrArenaPosition;
-    [SerializeField] private Vector3 _moveDirection;
+    private Vector3 _moveDirection;
     private Coroutine _delayToChangeMoveDirection;
 
     private CharacterController _characterController;
     private Mover _mover;
     private Rotator _rotator;
     private Health _health;
-    //private GameController _gameController;
-    private SpawnerEnemy _spawner;    
+    private GameController _gameController;
+    private SpawnerEnemy _spawner;
 
     public int DamageAplly { get; private set; }
 
-    public void Initialize(Vector3 centrArenaPosition, Health health, SpawnerEnemy spawner)
+    public void Initialize(Vector3 centrArenaPosition, Health health, SpawnerEnemy spawner, GameController gameController)
     {
         _characterController = GetComponent<CharacterController>();
         _mover = new Mover();
         _rotator = new Rotator(this.transform);
         _health = health;
-        //_gameController = gameController;
+        _gameController = gameController;
         _spawner = spawner;
 
         DamageAplly = 2;
@@ -46,8 +46,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        //if (_gameController.IsRunningGame ==false)
-        //    return;
+        if (_gameController.IsRunningGame == false)
+            return;
 
         if (_delayToChangeMoveDirection == null)
         {
@@ -144,13 +144,13 @@ public class Enemy : MonoBehaviour, IDamageable
         Vector3 directToArensCenter = _centrArenaPosition - transform.position;
 
         return directToArensCenter;
-    }   
+    }
 
     private void ToDie()
     {
         StopCoroutine(_delayToChangeMoveDirection);
         _delayToChangeMoveDirection = null;
-        _spawner.ToReportEnemyKilled();        
+        _spawner.ToReportEnemyKilled();
         Destroy(this.gameObject);
     }
 }
